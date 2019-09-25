@@ -1,0 +1,14 @@
+<h1>the nagafa page</h1>
+
+<a href="/new_tkchita">add a post</a>
+
+
+<% tkchita.forEach(function(tkchita){ %>
+<div>
+<img src="<%= tkchita.image%>" >
+    <p><%=tkchita.descrition%></p>
+    <p><%=tkchita.price%></p>
+
+
+</div>
+<% }); %>
