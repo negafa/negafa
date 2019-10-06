@@ -3,8 +3,9 @@ var express    = require("express"),
     bodyparser = require("body-parser"),
     tkchita    = require("./models/tkchita"),
     passport   = require("passport"),
-    localStrategy = require("passport-local")
-    proUser    = require("./models/proUser");
+    localStrategy = require("passport-local"),
+    proUser    = require("./models/proUser"),
+    user       =  require("./models/user");
 
 
 app = express();
@@ -30,7 +31,7 @@ passport.deserializeUser(proUser.deserializeUser());
 app.get("/",function(req, res){
     //res.send("it works now");
     res.redirect("/nagafa");
-})
+});
 
 
 app.get("/nagafa",function(req,res){
@@ -73,15 +74,17 @@ app.post("/nagafa",function(req,res){
 ////////////////////////
 // AUTHENTICATION ROUTES
 ////////////////////////
-app.get("/register", function(req, res){
+app.get("/register/pro", function(req, res){
+
     res.render("register");
 });
 
-app.post("/register", function(req, res){
+app.post("/register/pro", function(req, res){
     var newUser = new proUser({
         username: req.body.username
         // we gonna add the other data of the proUser later, but know let's just focus on the username ande the password
     });
+     
     proUser.register(newUser, req.body.password, function(err, user){
         if(err)
         {
@@ -94,6 +97,32 @@ app.post("/register", function(req, res){
         });
     });
 });
+
+
+app.get("/register",function(req,res){
+ res.render("registerUser");
+});
+
+app.post("/register",function(req,res){
+    var newUser = new user({
+        username: req.body.username
+       
+    });
+     
+    user.register(newUser, req.body.password, function(err, user){
+        if(err)
+        {
+            console.log(err);
+            return res.render("registerUser");
+        }
+
+        passport.authenticate("local")(req,res, function(){
+               res.send("u sign up");
+        });
+    });
+});
+
+
 //Login stuff
 app.get("/login", function(req, res){
     res.render("login");
