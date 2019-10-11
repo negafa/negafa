@@ -26,6 +26,10 @@ app.use(passport.session());
 passport.use(new localStrategy(proUser.authenticate()));
 passport.serializeUser(proUser.serializeUser());
 passport.deserializeUser(proUser.deserializeUser());
+app.use(function(req, res, next){
+    res.locals.currentUser = req.user;
+    next();
+});
 
 // you forgot the "/" route that's why it didn't work!
 app.get("/",function(req, res){
@@ -42,6 +46,7 @@ app.get("/nagafa",function(req,res){
             
         }else{
             res.render("nagafa",{tkchita:tkchita});
+            console.log(req.user);
         }
     });
 
@@ -70,6 +75,11 @@ app.post("/nagafa",function(req,res){
     });
     
 });
+
+//profile rout for the proUser
+app.get("/profil/:id", function(req, res){
+    res.send("welcome to your profile!");
+})
 
 ////////////////////////
 // AUTHENTICATION ROUTES
