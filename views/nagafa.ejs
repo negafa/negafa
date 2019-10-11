@@ -5,6 +5,9 @@
 <a href="/register">register</a>
 <a href="/login">login</a>
 <a href="/logout">logout</a>
+<% if(currentUser){ %>
+    <a href="/profil/<%= currentUser._id %>"><%= currentUser.username %></a>
+<% } %>    
 
 
 <% tkchita.forEach(function(tkchita){ %>
