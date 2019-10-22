@@ -42,11 +42,12 @@ app.get("/nagafa",function(req,res){
 
     tkchita.find({},function(err,tkchita){
         if(err){
+            console.log("there is a problem of finding ");
             console.log(err);
             
         }else{
             res.render("nagafa",{tkchita:tkchita});
-            console.log(req.user);
+            
         }
     });
 
@@ -58,28 +59,59 @@ app.get("/nagafa/new",function(req,res){
 });
 
 app.post("/nagafa",function(req,res){
-    // var desc = req.body.description;
-    // var image = req.body.image;
-    // var price = req.body.price;
+    var desc = req.body.description;
+    var image = req.body.image;
+     var price = req.body.price;
+    var author = {
+        id: req.user._id,
+        username: req.user.username
+    };
     
-    // var obj={desc:desc , image: image, price:price}
-    var obj = req.body.tkchita; //you already did it into an array named tkchita, see the "new_tkchita.ejs"
-    
-    tkchita.create(obj, function(err,tkchita){
+    var obj={description:desc , image: image, price:price,author:author};
+    //var obj = {req.body.tkchita, author:author}; //the association with proUser
+
+
+    proUser.findById(req.user._id,function(err,proUser){
         if(err){
-            console.log(err);
-        }else{
-            res.redirect("/nagafa");
-           // console.log(obj); see here that the object has the info from the body
+            console.log(err)
         }
+        else{
+            tkchita.create(obj, function(err,tkchita){
+                if(err){
+                    console.log("there is an error");
+                    console.log(err);
+                }else{
+                        
+                    tkchita.author.id = req.user._id;
+                    tkchita.author.username = req.user.username;
+                    tkchita.save();
+                    proUser.tkchita.push(tkchita);
+                    proUser.save();
+                    
+                    res.redirect("/nagafa");
+                    console.log("all is good ");
+                   // console.log(obj); see here that the object has the info from the body
+                }
+            });
+        }
+
     });
+    
+   
     
 });
 
 //profile rout for the proUser
 app.get("/profil/:id", function(req, res){
-    res.send("welcome to your profile!");
-})
+    proUser.findById(req.user._id).populate("tkchita").exec(function(err, tkchita){
+        if(err){
+            console.log(err);
+        }
+        else{
+            res.render("profilePage",{tkchita:tkchita});
+        }}
+       
+)});
 
 ////////////////////////
 // AUTHENTICATION ROUTES

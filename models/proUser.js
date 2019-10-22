@@ -13,7 +13,17 @@ var proUserSchema = new mongoose.Schema({
     Description : String,
     city: String,
     profession: String,
-    date:  { type: Date, default: Date.now }
+    date:  { type: Date, default: Date.now },
+    tkchita:
+            [{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"tkchita"
+           }]
+       
+     
+
+   
+    
 });
 
 proUserSchema.plugin(passportLocalMongoose);
